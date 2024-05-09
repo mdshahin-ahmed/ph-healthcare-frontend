@@ -11,28 +11,18 @@ import {
 import Image from "next/image";
 import assets from "@/assets";
 import Link from "next/link";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { userLogin } from "@/services/actions/userLogin";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { storeUserInfo } from "@/services/authServices";
-
-export type FormValues = {
-  email: string;
-  password: string;
-};
+import PHForm from "@/components/Forms/PHForm";
+import PHInput from "@/components/Forms/PHInput";
 
 const LoginPage = () => {
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>();
-
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const handleLogin = async (values: FieldValues) => {
     // console.log(values);
 
     try {
@@ -82,26 +72,22 @@ const LoginPage = () => {
             </Box>
           </Stack>
           <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <PHForm onSubmit={handleLogin}>
               <Grid container spacing={2} my={1}>
                 <Grid item md={6}>
-                  <TextField
+                  <PHInput
                     label="Email"
                     type="email"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("email")}
+                    name="email"
                   />
                 </Grid>
                 <Grid item md={6}>
-                  <TextField
+                  <PHInput
                     type="password"
                     label="Password"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("password")}
+                    name="password"
                   />
                 </Grid>
               </Grid>
@@ -121,7 +107,7 @@ const LoginPage = () => {
                 Don&apos;t have an account?
                 <Link href="/register">Create an account</Link>
               </Typography>
-            </form>
+            </PHForm>
           </Box>
         </Box>
       </Stack>
