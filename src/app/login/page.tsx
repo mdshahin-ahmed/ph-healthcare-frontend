@@ -1,25 +1,18 @@
 "use client";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import Image from "next/image";
 import assets from "@/assets";
-import Link from "next/link";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { userLogin } from "@/services/actions/userLogin";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { storeUserInfo } from "@/services/authServices";
 import PHForm from "@/components/Forms/PHForm";
 import PHInput from "@/components/Forms/PHInput";
-import { z } from "zod";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/authServices";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FieldValues } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 export const validationSchema = z.object({
   email: z.string().email("Please enter a valid email address!"),
@@ -28,6 +21,7 @@ export const validationSchema = z.object({
 
 const LoginPage = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
 
   const handleLogin = async (values: FieldValues) => {
     // console.log(values);
@@ -38,6 +32,9 @@ const LoginPage = () => {
         toast.success(res?.message);
         storeUserInfo(res?.data?.accessToken);
         router.push("/");
+      } else {
+        setError(res.message);
+        // console.log(res);
       }
     } catch (err: any) {
       console.error(err.message);
@@ -78,6 +75,21 @@ const LoginPage = () => {
               </Typography>
             </Box>
           </Stack>
+          {error && (
+            <Box>
+              <Typography
+                sx={{
+                  backgroundColor: "red",
+                  padding: "1px",
+                  borderRadius: "2px",
+                  color: "white",
+                  marginTop: "5px",
+                }}
+              >
+                {error}
+              </Typography>
+            </Box>
+          )}
           <Box>
             <PHForm
               onSubmit={handleLogin}
